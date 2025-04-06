@@ -6,21 +6,32 @@ import './CartItem.css';
 const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
-
+  console.log(typeof(cart))
   // Calculate total amount for all products in the cart
-  const calculateTotalAmount = () => {
-    let total = 0;
-    cart.forEach((item) => {
-      const qty = item.quantity;
-      const cost = item.cost;
 
-      const costNumber = parseFloat(cost.substring(1));
+    const calculateTotalAmount = (cart) => {
+      let itemsArray = [];
 
-      total += qty * costNumber;
-    });
-
-    return total.toFixed(2);
-  };
+      if (Array.isArray(cart)) {
+        itemsArray = cart;
+      } else if (typeof cart === 'object' && cart !== null) {
+        itemsArray = Object.values(cart); // convert object to array of values
+      } else {
+        return 0;
+      }
+    
+      let total = 0;
+      itemsArray.forEach((item) => {
+        const qty = item.quantity || 0;
+        const cost = item.cost || "$0";
+    
+        const costNumber = parseFloat(cost.substring(1)) || 0;
+        total += qty * costNumber;
+      });
+    
+      return total.toFixed(2);
+    };
+   
 
   const handleContinueShopping = (e) => {
     e.preventDefault();
